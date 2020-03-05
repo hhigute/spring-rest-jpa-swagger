@@ -1,8 +1,6 @@
---local -> create database Investment;
---Docker -> create database DbInvestment; 
+create database Investment;
 
---local -> use Investment;
---Docker -> use DbInvestment;
+use Investment;
 
 create table dbo.IofRference(
 	NrDay int not null,

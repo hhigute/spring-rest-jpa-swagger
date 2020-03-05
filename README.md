@@ -38,10 +38,28 @@ In this example we create crud operations using Spring Boot + JPA + Swagger
 		- DML.sql
 
 
-# Update your datasource informations at application.properties
+# Update file application.properties
 
+		###### Server ######
+		server.port=8081
+		###### Datasource ######
 		spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
 		spring.datasource.url=jdbc:sqlserver://localhost;databaseName=Investment
 		spring.datasource.username=<<SET_YOUR_USERNAME>>
 		spring.datasource.password=<<SET_YOUR_PASSWORD>>
 
+
+# Install maven dependencies 
+
+		mvn clean install
+
+# Build and start the application
+
+* Access swagger interface and test 
+	
+		http://localhost:8081/swagger-ui.html
+
+
+![Alt text](./doc/swagger.png?raw=true "Swagger")
+
+	
