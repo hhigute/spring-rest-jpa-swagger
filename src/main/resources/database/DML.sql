@@ -1,4 +1,5 @@
-use DbInvestment;
+use Investment;
+go
 
 INSERT INTO DBO.IofRference (NrDay, PercentFee) VALUES (1 ,96);
 INSERT INTO DBO.IofRference (NrDay, PercentFee) VALUES (2 ,93);

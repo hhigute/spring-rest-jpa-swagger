@@ -1,6 +1,8 @@
 create database Investment;
+go
 
 use Investment;
+
 
 create table dbo.IofRference(
 	NrDay int not null,
@@ -22,7 +24,6 @@ create table dbo.RiskLevel(
 alter table RiskLevel add constraint UQ_RiskLevel unique (Description); 
 
 
-
 create table dbo.Customer(
 	Document nvarchar(19) not null primary key,
 	Name nvarchar(50) not null,
@@ -35,6 +36,7 @@ create table dbo.Bank(
 	ContactName nvarchar(50) not null,
 	ContactPhone nvarchar(15) not null
 );
+
 
 create table dbo.CustomerBank(
 	CustomerDoc nvarchar(19) not null,
@@ -58,7 +60,6 @@ create table dbo.ProductBank (
 	enabled bit not null
 );
 alter table ProductBank add constraint UQ_ProductBank unique (codeBank,description);
---alter table ProductBank add constraint PK_ProductBank primary key (codeBank,description);
 alter table ProductBank add constraint FK_ProductBank_Bank foreign key (CodeBank) references Bank(Code);
 alter table ProductBank add constraint FK_ProductBank_RiskLevel foreign key (IdRiskLevel) references RiskLevel(Id);
 create index IX01_ProductBank on ProductBank(Id);
@@ -89,7 +90,6 @@ alter table UsersRole add constraint PK_UsersRole primary key (IdUser,IdRole);
 alter table UsersRole add constraint FK_UsersRole_User foreign key (IdUser) references Users(Id);
 alter table UsersRole add constraint FK_UsersRole_Role foreign key (IdRole) references Role(Id);
 
-
 -- table to save access toke
 create table oauth_access_token (
   token_id VARCHAR(255),
@@ -107,3 +107,4 @@ create table oauth_refresh_token (
   token varbinary(max),
   authentication varbinary(max)
 );
+go
