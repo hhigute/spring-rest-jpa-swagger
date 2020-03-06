@@ -1,4 +1,4 @@
-#Spring + JPA + Swagger
+# Spring + JPA + Swagger
 
 In this example we create crud operations using Spring + JPA + Swagger
 
@@ -35,7 +35,7 @@ Bellow others Maven dependencies that I configured manually.
 	</dependency>
 
 
-###_ Setup / Pre-Requirements_
+### _Setup / Pre-Requirements_
 
 * *MS SQL Server 2017 Express Edition
 
@@ -86,7 +86,7 @@ Bellow others Maven dependencies that I configured manually.
 	![Alt text](./doc/sqlcmd_tables.png?raw=true "check SqlServerContainer")
 
 
-###_ Update file application.properties_
+### _Update file application.properties_
 
 
 		###### Server ######
@@ -98,13 +98,13 @@ Bellow others Maven dependencies that I configured manually.
 		spring.datasource.password=<<SET_YOUR_PASSWORD>>
 
 
-###_ Install maven dependencies_ 
+### _Install maven dependencies_ 
 
 	mvn clean install
    ![Alt text](./doc/mvn_cleaninstall.png?raw=true "mvn clean install")
 
 
-###_ Build and start the application_
+### _Build and start the application_
 
    Access swagger interface and test 
 	
