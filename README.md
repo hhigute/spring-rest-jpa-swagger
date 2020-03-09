@@ -43,7 +43,7 @@ Bellow others Maven dependencies that I configured manually.
 
 
 ``` 
-1) Tables.sql
+1) DDL.sql
 2) DML.sql
 ```
 
@@ -59,31 +59,36 @@ Bellow others Maven dependencies that I configured manually.
 
    Run the command bellow in Prompt Ms-DOS </br>
    PS: Password must be strong </br></br> `docker run -d -p 1433:1433 -e sa_password=<<SET_YOUR_PASSWORD>> -e ACCEPT_EULA=Y --name SqlServerContainer microsoft/mssql-server-windows-express`
+   
 ![Alt text](./doc/dockerrun.png?raw=true "docker SqlServerContainer")	
 
 3. **Check Installation**
 	
    `docker ps -a`
-	![Alt text](./doc/dockerps-a.png?raw=true "docker ps -a")	
+   
+   ![Alt text](./doc/dockerps-a.png?raw=true "docker ps -a")	
 	
 4. **Connect to SqlServerContainer**	
 	
-   `sqlcmd -S localhost,1433 -U SA -P *<<SET_YOUR_PASSWORD>>*`
+   `sqlcmd -S localhost,1433 -U SA -P <<SET_YOUR_PASSWORD>>`
+   
    ![Alt text](./doc/sqlcmd.png?raw=true "sqlcmd connect SqlServerContainer")
 
 5. **Check Connection**
 		
    `select @@version`	
-	![Alt text](./doc/sqlcmd_check.png?raw=true "check SqlServerContainer")
+   	
+   ![Alt text](./doc/sqlcmd_check.png?raw=true "check SqlServerContainer")
 	
 6. **Create tables to run our project**
 
-   `Run the files/scripts .sql found in the folder "src -> main -> resources -> database"`
+   `Run the files/scripts .sql found in the folder "src -> main -> resources -> setup"`
 	
-   `sqlcmd -S localhost,1433 -U SA -P *<<SET_YOUR_PASSWORD>>* -i <PATH>\Tables.sql -o <PATH>\output_Tables.txt`
+   `sqlcmd -S localhost,1433 -U SA -P <<SET_YOUR_PASSWORD>> -i <PATH>\DDL.sql -o <PATH>\output_DDL.txt`
 	
-   `sqlcmd -S localhost,1433 -U SA -P *<<SET_YOUR_PASSWORD>>* -i <PATH>\DML.sql -o <PATH>\DML.txt`
-	![Alt text](./doc/sqlcmd_tables.png?raw=true "check SqlServerContainer")
+   `sqlcmd -S localhost,1433 -U SA -P <<SET_YOUR_PASSWORD>> -i <PATH>\DML.sql -o <PATH>\output_DML.txt`
+	
+   ![Alt text](./doc/sqlcmd_tables.png?raw=true "check SqlServerContainer")
 
 
 ### _Update file application.properties_
