@@ -118,3 +118,43 @@ Bellow others Maven dependencies that I configured manually.
    ![Alt text](./doc/swagger.png?raw=true "Swagger")
 
 	
+### _Deploy Application in Docker Container_
+   
+   To deploy this application in Docker container you should have to follow the steps bellow.
+    
+   * Adjust pom.xml to generate the project .jar file (tag <packaging>)
+
+	<packaging>jar</packaging>
+	
+   * Clean and install package with pom.xml adjusts
+	
+	mvn clean install	
+   
+      
+   * Create DockerFile (root project)
+	
+	FROM java:8
+	EXPOSE 7001
+	ADD /target/spring-rest-jpa-swagger-0.0.1-SNAPSHOT.jar spring-rest-jpa-swagger.jar
+	ENTRYPOINT ["java", "-jar", "spring-rest-jpa-swagger.jar"]
+
+   * Create project image
+	
+	docker build -f DockerFile -t spring-rest-jpa-swagger .
+   
+   ![Alt text](./doc/docker_create_image.png?raw=true "Create docker image")
+    		 
+    		 
+   * Start/run application 
+ 	Ps: The command bellow will allow the application at port 7001 and route to port 8081 internally (port configured within application.properties)
+ 	
+	docker run -p 7001:8081 spring-rest-jpa-swagger 	
+	
+   ![Alt text](./doc/docker_start_application.png?raw=true "Start docker image")	
+	
+   * Check docker image
+   
+	docker ps -f ancestor=spring-rest-jpa-swagger
+	
+   ![Alt text](./doc/docker_check_deploy.png?raw=true "Check image")
+ 	
