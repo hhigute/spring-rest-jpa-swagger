@@ -15,11 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.h3b.investment.exception.ResourceNotFoundException;
 import com.h3b.investment.model.ProductBank;
-import com.h3b.investment.repository.ProductBankRepository;
+import com.h3b.investment.service.ProductBankService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -29,20 +30,23 @@ public class ProductBankController {
 
 
 	@Autowired
-	ProductBankRepository productBankRepository;
+	ProductBankService productBankSerice;
 	
 	
 	@GetMapping("/productBank")
 	@ApiOperation(value="List all Products")
-	public List<ProductBank> listProductBank(){
-		return productBankRepository.findAll();
+	public ResponseEntity<List<ProductBank>> listProductBank(	@RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
+																@RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+																@RequestParam(name = "sortBy", defaultValue = "description") String sortBy){
+		
+		List<ProductBank> listProductBank = productBankSerice.listProductBank(pageNo, pageSize, sortBy);
+		return ResponseEntity.ok().body(listProductBank);
 	}
 	
 	@GetMapping("/productBank/{id}")
 	@ApiOperation(value="Get Product by ID")
 	public ResponseEntity<ProductBank> getProductBankById(@Valid @PathVariable("id") int id) throws ResourceNotFoundException{
-		ProductBank productBank = productBankRepository.findById(id)
-											.orElseThrow(()-> new ResourceNotFoundException("Product Bank not found for id: "+id));
+		ProductBank productBank = productBankSerice.getProductBankById(id);
 		return ResponseEntity.ok().body(productBank);
 	}
 	
@@ -50,36 +54,23 @@ public class ProductBankController {
 	@GetMapping("/productBank/codeBank/{codeBank}")
 	@ApiOperation(value="List all Products from a specific Bank")
 	public ResponseEntity<ProductBank> getProductBankByBankCode(@Valid @PathVariable("codeBank") String codeBank) throws ResourceNotFoundException{
-		ProductBank productBank = productBankRepository.findProductBankByBankCode(codeBank);
-		
-		if(productBank == null)
-			throw new ResourceNotFoundException("Product Bank not found for bank: "+codeBank);
-		
+		ProductBank productBank = productBankSerice.getProductBankByBankCode(codeBank);
 		return ResponseEntity.ok().body(productBank);
 	}
 	
 	@PostMapping("/productBank")
 	@ApiOperation(value="Create Product from a specific Bank")
-	public ProductBank createProductBank(@Valid @RequestBody ProductBank productBank) {
-		return productBankRepository.save(productBank);
+	public ResponseEntity<ProductBank> createProductBank(@Valid @RequestBody ProductBank productBank) {
+		ProductBank productBankCreated = productBankSerice.createProductBank(productBank);
+		return ResponseEntity.ok().body(productBankCreated);
 	}
 	
 	@PutMapping("/productBank/{id}")
 	@ApiOperation(value="Update Product by ID")
 	public ResponseEntity<ProductBank> updateProductBank(@PathVariable("id") int id, @Valid @RequestBody ProductBank productBankRequest) 
 			throws ResourceNotFoundException {
-		ProductBank productBank = productBankRepository.findById(id)
-				.orElseThrow(()-> new ResourceNotFoundException("Product Bank not found for id: "+id));
-		productBank.setId(productBankRequest.getId());
-		productBank.setCodeBank(productBankRequest.getCodeBank());
-		productBank.setDescription(productBankRequest.getDescription());
-		productBank.setAdministrationFee(productBankRequest.getAdministrationFee());
-		productBank.setDueDate(productBankRequest.getDueDate());
-		productBank.setLiquidityDay(productBankRequest.getLiquidityDay());
-		productBank.setIdRiskLevel(productBankRequest.getIdRiskLevel());
-		productBank.setEnabled(productBankRequest.getEnabled());
 		
-		final ProductBank productBankUpdated = productBankRepository.save(productBank);
+		ProductBank productBankUpdated = productBankSerice.updateProductBank(id, productBankRequest);
 		
 		return ResponseEntity.ok().body(productBankUpdated);
 	}
@@ -87,10 +78,8 @@ public class ProductBankController {
 	@DeleteMapping("/productBank/{id}")
 	@ApiOperation(value="Delete Product by ID")
 	public Map<String, Boolean> deleteProductBank(@PathVariable("id") int id) throws ResourceNotFoundException{
-		ProductBank productBank = productBankRepository.findById(id)
-												.orElseThrow(()->new ResourceNotFoundException("Product Bank not found for id: "+id));
 		
-		productBankRepository.delete(productBank);
+		productBankSerice.deleteProductBank(id);
 		
 		Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", Boolean.TRUE);
