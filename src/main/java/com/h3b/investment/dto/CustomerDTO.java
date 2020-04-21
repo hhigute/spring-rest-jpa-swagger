@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-public class CustomerDTO {
+public class CustomerDTO implements DTOEntity{
 
 	private String document;
 	private String name;

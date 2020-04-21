@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.h3b.investment.dto.CustomerBankDTO;
+import com.h3b.investment.dto.DTOEntity;
 import com.h3b.investment.dto.mapper.CustomerBankMapper;
 import com.h3b.investment.model.CustomerBank;
 import com.h3b.investment.service.CustomerBankService;
@@ -35,21 +36,21 @@ public class CustomerBankController {
 	
 	@GetMapping("/customerBank")
 	@ApiOperation(value="List all references between Customer and Bank")
-	public ResponseEntity<List<CustomerBankDTO>> listCustomerBank(  @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
+	public ResponseEntity<List<DTOEntity>> listCustomerBank(  @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
 																	@RequestParam(name="pageSize", defaultValue="10") int pageSize,
 																	@RequestParam(name="sortBy",defaultValue="customerDoc") String sortBy){
-		List<CustomerBankDTO> listCustomerBankDTO = customerBankService.listCustomerBank(pageNo,pageSize,sortBy)
-																		.stream()
-																		.map(customerBankMapper::convertToDTO)
-																		.collect(Collectors.toList());
+		List<DTOEntity> listCustomerBankDTO = customerBankService.listCustomerBank(pageNo,pageSize,sortBy)
+																 	.stream()
+																 	.map(node -> customerBankMapper.convertToDto(node, new CustomerBankDTO()))
+																 	.collect(Collectors.toList());
 		return ResponseEntity.ok().body(listCustomerBankDTO);
 	}
 	
 	@PostMapping("/customerBank")
 	@ApiOperation(value="Link Customer to Bank")
-	public ResponseEntity<CustomerBankDTO> createCustomerBank(@Valid @RequestBody CustomerBank customerBank) throws Exception{
+	public ResponseEntity<DTOEntity> createCustomerBank(@Valid @RequestBody CustomerBank customerBank) throws Exception{
 		
-		CustomerBankDTO customerBankDTO = customerBankMapper.convertToDTO(customerBankService.createCustomerBank(customerBank));
+		DTOEntity customerBankDTO = customerBankMapper.convertToDto(customerBankService.createCustomerBank(customerBank),new CustomerBankDTO() );
 		
 		return ResponseEntity.ok().body(customerBankDTO);
 	}

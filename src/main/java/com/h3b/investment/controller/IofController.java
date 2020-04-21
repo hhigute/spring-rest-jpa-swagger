@@ -23,8 +23,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/api/v1", produces = {"application/json"})
 public class IofController{
 
-	
-	
 	@Autowired
 	private IofService iofService;
 	
@@ -39,7 +37,7 @@ public class IofController{
 
 		List<Iof> listIof = iofService.listIofs(pageNo, pageSize, sortBy);
 		List<IofDTO> listIofDTO = listIof.stream()
-											.map(iofMapper::convertToDTO)
+											.map(iofMapper::convertToIofDTO)
 											.collect(Collectors.toList());
 		return ResponseEntity.ok().body(listIofDTO);
 		
@@ -48,7 +46,7 @@ public class IofController{
 	@GetMapping("/iof/{nrDay}")
 	@ApiOperation(value="Get IOF fee by day")
 	public ResponseEntity<IofDTO> getIofByNrDay(@PathVariable(value="nrDay") int nrDay) throws ResourceNotFoundException {
-		IofDTO iofDTO =  iofMapper.convertToDTO(iofService.getIofByNrDay(nrDay));
+		IofDTO iofDTO =  iofMapper.convertToIofDTO(iofService.getIofByNrDay(nrDay));
 		return ResponseEntity.ok().body(iofDTO);
 	}
 	

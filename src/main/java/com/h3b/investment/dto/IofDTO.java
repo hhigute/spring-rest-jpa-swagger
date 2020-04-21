@@ -1,6 +1,6 @@
 package com.h3b.investment.dto;
 
-public class IofDTO {	
+public class IofDTO implements DTOEntity{	
 	
 	private int nrDay;
 	private double porcentagemTaxa;

@@ -2,7 +2,7 @@ package com.h3b.investment.dto;
 
 import java.util.Date;
 
-public class ProductBankDTO {
+public class ProductBankDTO implements DTOEntity{
 	
 	private int id;
 	private String codeBank;

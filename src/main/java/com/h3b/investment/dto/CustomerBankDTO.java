@@ -3,7 +3,7 @@ package com.h3b.investment.dto;
 import com.h3b.investment.model.Bank;
 import com.h3b.investment.model.Customer;
 
-public class CustomerBankDTO {
+public class CustomerBankDTO implements DTOEntity{
 	
 	private String customerDoc;
 	private String codeBank;

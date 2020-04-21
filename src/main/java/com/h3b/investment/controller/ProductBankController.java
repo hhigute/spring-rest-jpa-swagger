@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.h3b.investment.dto.DTOEntity;
 import com.h3b.investment.dto.ProductBankDTO;
 import com.h3b.investment.dto.mapper.ProductBankMapper;
 import com.h3b.investment.exception.ResourceNotFoundException;
@@ -43,33 +44,33 @@ public class ProductBankController {
 	
 	@GetMapping("/productBank")
 	@ApiOperation(value="List all Products")
-	public ResponseEntity<List<ProductBankDTO>> listProductBank(	@RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
+	public ResponseEntity<List<DTOEntity>> listProductBank(	@RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
 																@RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
 																@RequestParam(name = "sortBy", defaultValue = "description") String sortBy){
 		
-		List<ProductBankDTO> listProductBankDTO = productBankSerice.listProductBank(pageNo, pageSize, sortBy)
-																	.stream()
-																	.map(productBankMapper::convertToDTO)
-																	.collect(Collectors.toList());
+		List<DTOEntity> listProductBankDTO = productBankSerice.listProductBank(pageNo, pageSize, sortBy)
+																.stream()
+																.map(node -> productBankMapper.convertToDto(node, new ProductBankDTO()))
+																.collect(Collectors.toList());
 		return ResponseEntity.ok().body(listProductBankDTO);
 	}
 	
 	@GetMapping("/productBank/{id}")
 	@ApiOperation(value="Get Product by ID")
-	public ResponseEntity<ProductBankDTO> getProductBankById(@Valid @PathVariable("id") int id) throws ResourceNotFoundException{
-		ProductBankDTO productBankDTO =  productBankMapper.convertToDTO(productBankSerice.getProductBankById(id));
+	public ResponseEntity<DTOEntity> getProductBankById(@Valid @PathVariable("id") int id) throws ResourceNotFoundException{
+		DTOEntity productBankDTO =  productBankMapper.convertToDto(productBankSerice.getProductBankById(id), new ProductBankDTO());
 		return ResponseEntity.ok().body(productBankDTO);
 	}
 	
 	
 	@GetMapping("/productBank/codeBank/{codeBank}")
 	@ApiOperation(value="List all Products from a specific Bank")
-	public ResponseEntity<List<ProductBankDTO>> getProductBankByBankCode(@Valid @PathVariable("codeBank") String codeBank) throws ResourceNotFoundException{
+	public ResponseEntity<List<DTOEntity>> getProductBankByBankCode(@Valid @PathVariable("codeBank") String codeBank) throws ResourceNotFoundException{
 		
-		List<ProductBankDTO> listProductBankDTO = productBankSerice.getProductBankByBankCode(codeBank)
-																	.stream()
-																	.map(productBankMapper::convertToDTO)
-																	.collect(Collectors.toList());
+		List<DTOEntity> listProductBankDTO = productBankSerice.getProductBankByBankCode(codeBank)
+																.stream()
+																.map(node -> productBankMapper.convertToDto(node,new ProductBankDTO()))
+																.collect(Collectors.toList());
 		
 		return ResponseEntity.ok().body(listProductBankDTO);
 	}
@@ -77,7 +78,7 @@ public class ProductBankController {
 	@PostMapping("/productBank")
 	@ApiOperation(value="Create Product from a specific Bank")
 	public ResponseEntity<ProductBankDTO> createProductBank(@Valid @RequestBody ProductBankDTO productBankDTO) {
-		ProductBank productBank = productBankMapper.convertToEntity(productBankDTO);
+		ProductBank productBank = (ProductBank) productBankMapper.convertToEntity(new ProductBank() ,productBankDTO);
 		ProductBank createdProductBank = productBankSerice.createProductBank(productBank);
 		
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -90,12 +91,12 @@ public class ProductBankController {
 	
 	@PutMapping("/productBank/{id}")
 	@ApiOperation(value="Update Product by ID")
-	public ResponseEntity<ProductBankDTO> updateProductBank(@PathVariable("id") int id, @Valid @RequestBody ProductBankDTO productBankDTO) 
+	public ResponseEntity<DTOEntity> updateProductBank(@PathVariable("id") int id, @Valid @RequestBody ProductBankDTO productBankDTO) 
 			throws ResourceNotFoundException {
 
-		ProductBank productBank = productBankMapper.convertToEntity(productBankDTO);
+		ProductBank productBank = (ProductBank) productBankMapper.convertToEntity(new ProductBank(),productBankDTO);
 		ProductBank productBankUpdated = productBankSerice.updateProductBank(id, productBank);
-		ProductBankDTO responseProductBankDTO = productBankMapper.convertToDTO(productBankUpdated);
+		DTOEntity responseProductBankDTO = productBankMapper.convertToDto(productBankUpdated, new ProductBankDTO());
 		return ResponseEntity.ok().body(responseProductBankDTO);
 	}
 	

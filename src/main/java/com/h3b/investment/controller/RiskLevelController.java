@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.h3b.investment.dto.DTOEntity;
 import com.h3b.investment.dto.RiskLevelDTO;
 import com.h3b.investment.dto.mapper.RiskLevelMapper;
 import com.h3b.investment.exception.ResourceNotFoundException;
@@ -32,24 +33,24 @@ public class RiskLevelController {
 	
 	@GetMapping("/riskLevel")
 	@ApiOperation(value="List all Risk Levels")
-	public ResponseEntity<List<RiskLevelDTO>> listRiskLevels(	@RequestParam(name = "pageNo", defaultValue= "0") int pageNo,
+	public ResponseEntity<List<DTOEntity>> listRiskLevels(	@RequestParam(name = "pageNo", defaultValue= "0") int pageNo,
 															@RequestParam(name = "pageSize", defaultValue = "10")int pageSize,
 															@RequestParam(name = "sortBy", defaultValue = "description") String sortBy){
 		
 		
-		List<RiskLevelDTO> listRiskLevelDTO = riskLevelService.listRiskLevels(pageNo, pageSize, sortBy)
+		List<DTOEntity> listRiskLevelDTO = riskLevelService.listRiskLevels(pageNo, pageSize, sortBy)
 																.stream()
-																.map(riskLevelMapper::convertToDTO)
+																.map(node -> riskLevelMapper.convertToDto(node, new RiskLevelDTO()))
 																.collect(Collectors.toList());
 		return ResponseEntity.ok().body(listRiskLevelDTO);
 	}
 	
 	@GetMapping("/riskLevel/{description}")
 	@ApiOperation(value="Get a specific Risk by description")
-	public ResponseEntity<RiskLevelDTO> findRiskLevelByDescription(@Valid @PathVariable("description") String description)
+	public ResponseEntity<DTOEntity> findRiskLevelByDescription(@Valid @PathVariable("description") String description)
 															throws ResourceNotFoundException{
 		
-		RiskLevelDTO riskLevelDTO = riskLevelMapper.convertToDTO(riskLevelService.findRiskLevelByDescription(description));
+		DTOEntity riskLevelDTO = riskLevelMapper.convertToDto(riskLevelService.findRiskLevelByDescription(description), new RiskLevelDTO());
 		return ResponseEntity.ok().body(riskLevelDTO);
 	}
 	

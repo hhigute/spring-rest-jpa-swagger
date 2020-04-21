@@ -1,6 +1,6 @@
 package com.h3b.investment.dto;
 
-public class RiskLevelDTO {
+public class RiskLevelDTO implements DTOEntity{
 
 	private int id;
 	private String description;

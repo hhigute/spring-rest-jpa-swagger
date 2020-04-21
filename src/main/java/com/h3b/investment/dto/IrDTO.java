@@ -1,6 +1,6 @@
 package com.h3b.investment.dto;
 
-public class IrDTO {
+public class IrDTO implements DTOEntity{
 
 	private int startDay;
 	private int finishDay;

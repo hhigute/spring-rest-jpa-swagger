@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-public class BankDTO {
+public class BankDTO implements DTOEntity{
 
 
 	private String code;

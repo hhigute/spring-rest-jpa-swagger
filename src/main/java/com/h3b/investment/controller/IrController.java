@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.h3b.investment.dto.DTOEntity;
 import com.h3b.investment.dto.IrDTO;
 import com.h3b.investment.dto.mapper.IrMapper;
 import com.h3b.investment.exception.ResourceNotFoundException;
@@ -32,14 +33,14 @@ public class IrController {
 	
 	@GetMapping("/ir")
 	@ApiOperation(value="List all IR fees")
-	public ResponseEntity<List<IrDTO>> listIrs(	@RequestParam(name="pageNo",defaultValue="0") int pageNo,
+	public ResponseEntity<List<DTOEntity>> listIrs(	@RequestParam(name="pageNo",defaultValue="0") int pageNo,
 												@RequestParam(name="pageSize",defaultValue="10") int pageSize,
 												@RequestParam(name="sortBy",defaultValue="startDay") String sortBy){
 		
-		List<IrDTO> listIrDTO = irService.listIrs(pageNo, pageSize, sortBy)
-											.stream()
-											.map(irMapper::convertToDTO)
-											.collect(Collectors.toList());
+		List<DTOEntity> listIrDTO = irService.listIrs(pageNo, pageSize, sortBy)
+												.stream()
+												.map(node -> irMapper.convertToDto(node, new IrDTO()))
+												.collect(Collectors.toList());
 		
 		return ResponseEntity.ok().body(listIrDTO);
 	}
@@ -47,8 +48,8 @@ public class IrController {
 	
 	@GetMapping("/ir/{day}")
 	@ApiOperation(value="Get IR fee by day")
-	public ResponseEntity<IrDTO> findByRangeDay(@Valid @PathVariable(value="day") int day) throws ResourceNotFoundException {
-		IrDTO irDTO = irMapper.convertToDTO(irService.findByRangeDay(day));
+	public ResponseEntity<DTOEntity> findByRangeDay(@Valid @PathVariable(value="day") int day) throws ResourceNotFoundException {
+		DTOEntity irDTO = irMapper.convertToDto(irService.findByRangeDay(day), new IrDTO());
 		return ResponseEntity.ok().body(irDTO);		
 	}
 	

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.h3b.investment.dto.CustomerDTO;
+import com.h3b.investment.dto.DTOEntity;
 import com.h3b.investment.dto.mapper.CustomerMapper;
 import com.h3b.investment.exception.ResourceNotFoundException;
 import com.h3b.investment.model.Customer;
@@ -39,13 +40,13 @@ public class CustomerController {
 	
 	@GetMapping("/customer" )
 	@ApiOperation(value="List all Customers")
-	public ResponseEntity<List<CustomerDTO>> listCustomer( @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
+	public ResponseEntity<List<DTOEntity>> listCustomer( @RequestParam(name="pageNo", defaultValue = "0") int pageNo,
 										@RequestParam(name="pageSize", defaultValue = "10") int pageSize,
 										@RequestParam(name="sortBy", defaultValue = "name") String sortBy){
 		
-			List<CustomerDTO> listCustomerDTO = customerService.listCustomer(pageNo, pageSize, sortBy)
+			List<DTOEntity> listCustomerDTO = customerService.listCustomer(pageNo, pageSize, sortBy)
 																.stream()
-																.map(customerMapper::convertToDTO)
+																.map(node -> customerMapper.convertToDto(node, new CustomerDTO()))
 																.collect(Collectors.toList());
 			return ResponseEntity.ok().body(listCustomerDTO);
 	}
@@ -53,17 +54,17 @@ public class CustomerController {
 	
 	@GetMapping("/customer/{doc}")
 	@ApiOperation(value="Get Customer by document")
-	public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable(name = "doc") String doc) throws ResourceNotFoundException{
+	public ResponseEntity<DTOEntity> getCustomerById(@PathVariable(name = "doc") String doc) throws ResourceNotFoundException{
 		
-		CustomerDTO customerDTOResponse = customerMapper.convertToDTO(customerService.getCustomerById(doc));
-		return ResponseEntity.ok().body(customerDTOResponse);
+		DTOEntity customerDTO = customerMapper.convertToDto(customerService.getCustomerById(doc), new CustomerDTO());
+		return ResponseEntity.ok().body(customerDTO);
 		
 	}
 	
 	@PostMapping("/customer")
 	@ApiOperation(value="Create Customer")
 	public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO) throws PersistenceException   {
-		Customer customer = customerMapper.convertToEntity(customerDTO);
+		Customer customer = (Customer)customerMapper.convertToEntity(new Customer(),customerDTO);
 		Customer customerCreated = customerService.createCustomer(customer);
 		
 
@@ -77,10 +78,10 @@ public class CustomerController {
 	
 	@PutMapping("/customer")
 	@ApiOperation(value="Update Customer by Document")
-	public ResponseEntity<CustomerDTO> updateCustomer(	@Valid @RequestBody CustomerDTO customerDTORequest) 
+	public ResponseEntity<DTOEntity> updateCustomer(	@Valid @RequestBody CustomerDTO customerDTORequest) 
 															throws ResourceNotFoundException{
-		Customer customerRequest = customerMapper.convertToEntity(customerDTORequest);
-		CustomerDTO customerDTOUpdated = customerMapper.convertToDTO(customerService.updateCustomer(customerRequest));
+		Customer customerRequest = (Customer) customerMapper.convertToEntity(new Customer(),customerDTORequest);
+		DTOEntity customerDTOUpdated = customerMapper.convertToDto(customerService.updateCustomer(customerRequest), new CustomerDTO());
 		return ResponseEntity.ok().body(customerDTOUpdated);
 	}
 	
