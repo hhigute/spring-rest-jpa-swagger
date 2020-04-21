@@ -1,8 +1,9 @@
 package com.h3b.investment.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity(name = "Customer")
 public class Customer {
@@ -33,15 +36,14 @@ public class Customer {
 	@NotBlank(message = "Phone {javax.validation.constraints.NotBlank.message}")
 	private String phone;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "CustomerBank",
-            joinColumns = {@JoinColumn(name = "CustomerDoc")},
-            inverseJoinColumns = {@JoinColumn(name = "CodeBank")}
-    )
-    private Set<Bank> banks = new HashSet<>();
+	@JsonIgnoreProperties("customers")
+	@ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.ALL})
+	@JoinTable(name = "CustomerBank",
+				joinColumns = {@JoinColumn(name = "CustomerDoc")},
+				inverseJoinColumns = {@JoinColumn(name = "CodeBank")})
+	private List<Bank> banks = new ArrayList<Bank>();
 
-	public Set<Bank> getBanks() {
+	public List<Bank> getBanks() {
         return banks;
     }
 	
@@ -52,12 +54,10 @@ public class Customer {
 	public Customer(
 			@NotBlank(message = "Document {javax.validation.constraints.NotBlank.message}") @Length(max = 19, message = "Document {javax.validation.constraints.Length.message}") String document,
 			@Length(max = 50, message = "Name {javax.validation.constraints.Length.message}") @NotBlank(message = "Name {javax.validation.constraints.NotBlank.message}") String name,
-			@Length(max = 15, message = "Phone {javax.validation.constraints.Length.message}") @NotBlank(message = "Phone {javax.validation.constraints.NotBlank.message}") String phone,
-			Set<Bank> banks) {
+			@Length(max = 15, message = "Phone {javax.validation.constraints.Length.message}") @NotBlank(message = "Phone {javax.validation.constraints.NotBlank.message}") String phone) {
 		this.document = document;
 		this.name = name;
 		this.phone = phone;
-		this.banks = banks;
 	}
 
 	public String getDocument() {

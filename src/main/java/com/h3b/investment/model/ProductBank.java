@@ -18,6 +18,8 @@ import javax.validation.constraints.PositiveOrZero;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class ProductBank {
 
@@ -54,6 +56,7 @@ public class ProductBank {
 	@Column(name = "IdRiskLevel", nullable = false)
 	private int idRiskLevel;
 
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("IdRiskLevel")
 	@JoinColumn(name = "IdRiskLevel")

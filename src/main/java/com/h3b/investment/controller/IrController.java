@@ -1,6 +1,7 @@
 package com.h3b.investment.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.h3b.investment.dto.IrDTO;
+import com.h3b.investment.dto.mapper.IrMapper;
 import com.h3b.investment.exception.ResourceNotFoundException;
-import com.h3b.investment.model.Ir;
 import com.h3b.investment.service.IrService;
 
 import io.swagger.annotations.ApiOperation;
@@ -25,24 +27,29 @@ public class IrController {
 	@Autowired
 	IrService irService;
 	
+	@Autowired
+	IrMapper irMapper;
 	
 	@GetMapping("/ir")
 	@ApiOperation(value="List all IR fees")
-	public ResponseEntity<List<Ir>> listIrs(@RequestParam(name="pageNo",defaultValue="0") int pageNo,
-							@RequestParam(name="pageSize",defaultValue="0") int pageSize,
-							@RequestParam(name="sortBy",defaultValue="0") String sortBy){
+	public ResponseEntity<List<IrDTO>> listIrs(	@RequestParam(name="pageNo",defaultValue="0") int pageNo,
+												@RequestParam(name="pageSize",defaultValue="10") int pageSize,
+												@RequestParam(name="sortBy",defaultValue="startDay") String sortBy){
 		
-		List<Ir> listIr = irService.listIrs(pageNo, pageSize, sortBy);
+		List<IrDTO> listIrDTO = irService.listIrs(pageNo, pageSize, sortBy)
+											.stream()
+											.map(irMapper::convertToDTO)
+											.collect(Collectors.toList());
 		
-		return ResponseEntity.ok().body(listIr);
+		return ResponseEntity.ok().body(listIrDTO);
 	}
 	
 	
 	@GetMapping("/ir/{day}")
 	@ApiOperation(value="Get IR fee by day")
-	public ResponseEntity<Ir> findByRangeDay(@Valid @PathVariable(value="day") int day) throws ResourceNotFoundException {
-		Ir ir = irService.findByRangeDay(day);
-		return ResponseEntity.ok().body(ir);		
+	public ResponseEntity<IrDTO> findByRangeDay(@Valid @PathVariable(value="day") int day) throws ResourceNotFoundException {
+		IrDTO irDTO = irMapper.convertToDTO(irService.findByRangeDay(day));
+		return ResponseEntity.ok().body(irDTO);		
 	}
 	
 	

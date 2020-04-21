@@ -1,11 +1,19 @@
 package com.h3b.investment.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity(name = "Bank")
 public class Bank {
@@ -31,6 +39,10 @@ public class Bank {
 	@NotBlank(message = "ContactPhone {javax.validation.constraints.NotBlank.message}")
 	private String contactPhone;
 
+	@JsonIgnoreProperties("banks")
+	@ManyToMany(mappedBy="banks", fetch = FetchType.EAGER,cascade = {CascadeType.ALL})
+	private List<Customer> customers = new ArrayList<Customer>();
+	
 	public Bank() {
 
 	}
@@ -76,6 +88,10 @@ public class Bank {
 
 	public void setContactPhone(String contactPhone) {
 		this.contactPhone = contactPhone;
+	}
+	
+	public List<Customer> getCustomers(){
+		return customers;
 	}
 
 	@Override

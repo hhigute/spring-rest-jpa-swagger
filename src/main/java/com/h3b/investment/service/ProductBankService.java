@@ -43,13 +43,13 @@ public class ProductBankService {
 	}
 	
 	
-	public ProductBank getProductBankByBankCode(String codeBank) throws ResourceNotFoundException{
-		ProductBank productBank = productBankRepository.findProductBankByBankCode(codeBank);
+	public List<ProductBank> getProductBankByBankCode(String codeBank) throws ResourceNotFoundException{
+		List<ProductBank> listProductBank = productBankRepository.findProductBankByBankCode(codeBank);
 		
-		if(productBank == null)
+		if(listProductBank == null)
 			throw new ResourceNotFoundException("Product Bank not found for bank: "+codeBank);
 		
-		return productBank;
+		return listProductBank;
 	}
 	
 	public ProductBank createProductBank(@Valid @RequestBody ProductBank productBank) {

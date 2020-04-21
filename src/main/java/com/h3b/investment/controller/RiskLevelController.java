@@ -1,6 +1,7 @@
 package com.h3b.investment.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.h3b.investment.dto.RiskLevelDTO;
+import com.h3b.investment.dto.mapper.RiskLevelMapper;
 import com.h3b.investment.exception.ResourceNotFoundException;
-import com.h3b.investment.model.RiskLevel;
 import com.h3b.investment.service.RiskLevelService;
 
 import io.swagger.annotations.ApiOperation;
@@ -25,23 +27,30 @@ public class RiskLevelController {
 	@Autowired
 	RiskLevelService riskLevelService;
 	
+	@Autowired
+	RiskLevelMapper riskLevelMapper;
+	
 	@GetMapping("/riskLevel")
 	@ApiOperation(value="List all Risk Levels")
-	public ResponseEntity<List<RiskLevel>> listRiskLevels(	@RequestParam(name = "pageNo", defaultValue= "0") int pageNo,
+	public ResponseEntity<List<RiskLevelDTO>> listRiskLevels(	@RequestParam(name = "pageNo", defaultValue= "0") int pageNo,
 															@RequestParam(name = "pageSize", defaultValue = "10")int pageSize,
 															@RequestParam(name = "sortBy", defaultValue = "description") String sortBy){
 		
 		
-		List<RiskLevel> listRiskLevel = riskLevelService.listRiskLevels(pageNo, pageSize, sortBy);
-		return ResponseEntity.ok().body(listRiskLevel);
+		List<RiskLevelDTO> listRiskLevelDTO = riskLevelService.listRiskLevels(pageNo, pageSize, sortBy)
+																.stream()
+																.map(riskLevelMapper::convertToDTO)
+																.collect(Collectors.toList());
+		return ResponseEntity.ok().body(listRiskLevelDTO);
 	}
 	
 	@GetMapping("/riskLevel/{description}")
 	@ApiOperation(value="Get a specific Risk by description")
-	public ResponseEntity<RiskLevel> findRiskLevelByDescription(@Valid @PathVariable("description") String description)
+	public ResponseEntity<RiskLevelDTO> findRiskLevelByDescription(@Valid @PathVariable("description") String description)
 															throws ResourceNotFoundException{
-		RiskLevel riskLevel = riskLevelService.findRiskLevelByDescription(description);
-		return ResponseEntity.ok().body(riskLevel);
+		
+		RiskLevelDTO riskLevelDTO = riskLevelMapper.convertToDTO(riskLevelService.findRiskLevelByDescription(description));
+		return ResponseEntity.ok().body(riskLevelDTO);
 	}
 	
 }
