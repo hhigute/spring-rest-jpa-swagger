@@ -1,4 +1,4 @@
-package com.h3b.investment.springrestjpa;
+package com.h3b.investment;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
