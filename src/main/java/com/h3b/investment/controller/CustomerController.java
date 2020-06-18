@@ -78,7 +78,7 @@ public class CustomerController {
 	
 	@PutMapping("/customer")
 	@ApiOperation(value="Update Customer by Document")
-	public ResponseEntity<DTOEntity> updateCustomer(	@Valid @RequestBody CustomerDTO customerDTORequest) 
+	public ResponseEntity<?> updateCustomer(	@Valid @RequestBody CustomerDTO customerDTORequest) 
 															throws ResourceNotFoundException{
 		Customer customerRequest = (Customer) customerMapper.convertToEntity(new Customer(),customerDTORequest);
 		DTOEntity customerDTOUpdated = customerMapper.convertToDto(customerService.updateCustomer(customerRequest), new CustomerDTO());
