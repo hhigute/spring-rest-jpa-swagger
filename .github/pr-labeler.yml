@@ -1,3 +1,0 @@
-feature: ['feature/*', 'feat/*']
-bugfix: ['bugfix/*', 'fix/*', 'bug/*']
-documentation: ['doc/*', 'documentation/*']
