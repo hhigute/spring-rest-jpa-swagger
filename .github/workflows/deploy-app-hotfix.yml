@@ -17,44 +17,13 @@ jobs:
     if: ${{ (contains(github.event.pull_request.labels.name, 'hotfix')) }}
     name: Generate Config
     runs-on: ubuntu-latest
-    outputs:
-      staging_ecr_repository: ${{ steps.create-output.outputs.staging_ecr_repository }}
-      staging_task_definition_template: ${{ steps.create-output.outputs.staging_task_definition_template }}
-      staging_task_definition_family: ${{ steps.create-output.outputs.staging_task_definition_family }}
-      staging_container_name: ${{ steps.create-output.outputs.staging_container_name }}
-      staging_ecs_cluster: ${{ steps.create-output.outputs.staging_ecs_cluster }}
-      staging_ecs_service: ${{ steps.create-output.outputs.staging_ecs_service }}
-      staging_run_dd_tests: ${{ steps.create-output.outputs.staging_run_dd_tests }}
-      staging_dd_test_id: ${{ steps.create-output.outputs.staging_dd_test_id }}
-      staging_send_slack_notifications: ${{ steps.create-output.outputs.staging_send_slack_notifications }}
-      production_ecr_repository: ${{ steps.create-output.outputs.production_ecr_repository }}
-      production_task_definition_template: ${{ steps.create-output.outputs.production_task_definition_template }}
-      production_task_definition_family: ${{ steps.create-output.outputs.production_task_definition_family }}
-      production_container_name: ${{ steps.create-output.outputs.production_container_name }}
-      production_ecs_cluster: ${{ steps.create-output.outputs.production_ecs_cluster }}
-      production_ecs_service: ${{ steps.create-output.outputs.production_ecs_service }}
-      production_run_dd_tests: ${{ steps.create-output.outputs.production_run_dd_tests }}
-      production_dd_test_id: ${{ steps.create-output.outputs.production_dd_test_id }}
-      production_send_slack_notifications: ${{ steps.create-output.outputs.production_send_slack_notifications }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Create output
-        id: create-output
-        run: |
-          mapfile -t input_keys < <(jq -r 'keys[]' ${{ env.CONFIG_FILE_PATH }})
-          for key in "${input_keys[@]}"
-          do
-            echo "$key=$(jq -r .$key ${{ env.CONFIG_FILE_PATH }})" >> $GITHUB_OUTPUT
-          done
+      - name: print
+        run: echo "generate-config"
 
   build-test:
     needs: [ generate-config ]
     name: Build and Test
-    permissions:
-      id-token: write
-      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: print
