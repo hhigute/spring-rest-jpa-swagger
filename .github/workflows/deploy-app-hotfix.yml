@@ -1,0 +1,119 @@
+# This workflow will build and deploy a docker container to AWS Fargate.
+
+name: Deploy Hotfix
+
+on:
+  pull_request:
+  types: [labeled, unlabeled]
+
+concurrency: app-deployment
+
+env:
+  CONFIG_FILE_PATH: ".github/deploy-app-config.json"
+
+jobs:
+  # Generate outputs based on json config file that can be used in subsequent jobs
+  generate-config:
+    if: ${{ (contains(github.event.pull_request.labels.name, 'hotfix')) }}
+    name: Generate Config
+    runs-on: ubuntu-latest
+    outputs:
+      staging_ecr_repository: ${{ steps.create-output.outputs.staging_ecr_repository }}
+      staging_task_definition_template: ${{ steps.create-output.outputs.staging_task_definition_template }}
+      staging_task_definition_family: ${{ steps.create-output.outputs.staging_task_definition_family }}
+      staging_container_name: ${{ steps.create-output.outputs.staging_container_name }}
+      staging_ecs_cluster: ${{ steps.create-output.outputs.staging_ecs_cluster }}
+      staging_ecs_service: ${{ steps.create-output.outputs.staging_ecs_service }}
+      staging_run_dd_tests: ${{ steps.create-output.outputs.staging_run_dd_tests }}
+      staging_dd_test_id: ${{ steps.create-output.outputs.staging_dd_test_id }}
+      staging_send_slack_notifications: ${{ steps.create-output.outputs.staging_send_slack_notifications }}
+      production_ecr_repository: ${{ steps.create-output.outputs.production_ecr_repository }}
+      production_task_definition_template: ${{ steps.create-output.outputs.production_task_definition_template }}
+      production_task_definition_family: ${{ steps.create-output.outputs.production_task_definition_family }}
+      production_container_name: ${{ steps.create-output.outputs.production_container_name }}
+      production_ecs_cluster: ${{ steps.create-output.outputs.production_ecs_cluster }}
+      production_ecs_service: ${{ steps.create-output.outputs.production_ecs_service }}
+      production_run_dd_tests: ${{ steps.create-output.outputs.production_run_dd_tests }}
+      production_dd_test_id: ${{ steps.create-output.outputs.production_dd_test_id }}
+      production_send_slack_notifications: ${{ steps.create-output.outputs.production_send_slack_notifications }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create output
+        id: create-output
+        run: |
+          mapfile -t input_keys < <(jq -r 'keys[]' ${{ env.CONFIG_FILE_PATH }})
+          for key in "${input_keys[@]}"
+          do
+            echo "$key=$(jq -r .$key ${{ env.CONFIG_FILE_PATH }})" >> $GITHUB_OUTPUT
+          done
+
+  build-test:
+    needs: [ generate-config ]
+    name: Build and Test
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: print
+        run: echo "Build and Test"
+
+  # https://github.com/macmms/github-actions-workflows/blob/main/.github/workflows/deploy-from-ecr-to-ecs.yml
+  deploy-staging:
+    if: github.event.review.state == 'approved'
+    needs: [ generate-config, build-test ]
+    name: Deploy Staging
+    environment: stg-env
+    runs-on: ubuntu-latest
+      steps:
+          - name: print
+            run: echo "deploy-staging"
+
+
+  draft-release:
+    needs: [ deploy-staging ]
+    name: Draft Release Notes
+    runs-on: self-hosted-central
+    outputs:
+      release_tag: ${{ steps.draft-release.outputs.tag_name }}
+      release_id: ${{ steps.draft-release.outputs.id }}
+    steps:
+      - name: Draft Release Notes
+        uses: release-drafter/release-drafter@v5
+        id: draft-release
+        with:
+          publish: false
+          disable-autolabeler: true
+          config-name: release-drafter-config.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  replicate-image-prod:
+    needs: [ deploy-staging ]
+    name: Replicate Image to Production
+    runs-on: ubuntu-latest
+      steps:
+          - name: print
+            run: echo "replicate-image-prod"
+
+
+  publish-release:
+    needs: [ draft-release, replicate-image-prod ]
+    name: Publish Release
+    runs-on: ubuntu-latest
+      steps:
+          - name: print
+            run: echo "publish-release"
+
+
+  deploy-production:
+    needs: [ deploy-staging, replicate-image-prod, publish-release ]
+    name: Deploy Production
+    environment: prod-env
+    runs-on: ubuntu-latest
+      steps:
+          - name: print
+            run: echo "deploy-production"
