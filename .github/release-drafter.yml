@@ -27,6 +27,7 @@ version-resolver:
       - 'minor'
   patch:
     labels:
+      - 'hotfix'
       - 'patch'
   default: patch
 template: |
