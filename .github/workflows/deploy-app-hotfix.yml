@@ -67,9 +67,9 @@ jobs:
     name: Deploy Staging
     environment: stg-env
     runs-on: ubuntu-latest
-      steps:
-          - name: print
-            run: echo "deploy-staging"
+    steps:
+      - name: print
+        run: echo "deploy-staging"
 
 
   draft-release:
@@ -95,18 +95,18 @@ jobs:
     needs: [ deploy-staging ]
     name: Replicate Image to Production
     runs-on: ubuntu-latest
-      steps:
-          - name: print
-            run: echo "replicate-image-prod"
+    steps:
+      - name: print
+        run: echo "replicate-image-prod"
 
 
   publish-release:
     needs: [ draft-release, replicate-image-prod ]
     name: Publish Release
     runs-on: ubuntu-latest
-      steps:
-          - name: print
-            run: echo "publish-release"
+    steps:
+      - name: print
+        run: echo "publish-release"
 
 
   deploy-production:
@@ -114,6 +114,6 @@ jobs:
     name: Deploy Production
     environment: prod-env
     runs-on: ubuntu-latest
-      steps:
-          - name: print
-            run: echo "deploy-production"
+    steps:
+      - name: print
+        run: echo "deploy-production"
