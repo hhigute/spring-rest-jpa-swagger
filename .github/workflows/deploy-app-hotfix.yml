@@ -85,7 +85,7 @@ jobs:
         with:
           publish: false
           disable-autolabeler: true
-          config-name: release-drafter-config.yml
+          config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
