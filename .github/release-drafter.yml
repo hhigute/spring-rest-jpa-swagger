@@ -9,6 +9,7 @@ categories:
     labels:
       - 'fix'
       - 'bugfix'
+      - 'hotfix'
       - 'bug'
   - title: '📄 Documentation'
     labels:
