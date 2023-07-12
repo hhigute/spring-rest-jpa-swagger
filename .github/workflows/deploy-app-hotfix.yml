@@ -4,12 +4,7 @@ name: Deploy Hotfix
 
 on:
   pull_request:
-  types: [labeled, unlabeled]
-
-concurrency: app-deployment
-
-env:
-  CONFIG_FILE_PATH: ".github/deploy-app-config.json"
+    types: [labeled, unlabeled, opened, edited, synchronize, converted_to_draft]
 
 jobs:
   # Generate outputs based on json config file that can be used in subsequent jobs
