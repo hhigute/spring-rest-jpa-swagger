@@ -9,7 +9,7 @@ on:
 jobs:
   # Generate outputs based on json config file that can be used in subsequent jobs
   generate-config:
-    #if: ${{ (contains(github.event.pull_request.labels.name, 'hotfix')) }}
+    if: ${{ (contains(github.event.pull_request.labels.*.name, 'hotfix')) }}
     name: Generate Config
     runs-on: ubuntu-latest
     steps:
