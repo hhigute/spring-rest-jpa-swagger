@@ -14,7 +14,7 @@ env:
 jobs:
   # Generate outputs based on json config file that can be used in subsequent jobs
   generate-config:
-    if: ${{ (contains(github.event.pull_request.labels.*.name, 'hotfix')) && (github.event.review.state == 'approved') }}
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'hotfix') && github.event.review.state == 'approved' }}
     # if: github.event.review.state == 'approved'
     name: Generate Config
     runs-on: ubuntu-latest
