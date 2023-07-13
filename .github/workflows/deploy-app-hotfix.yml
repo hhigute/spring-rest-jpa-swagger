@@ -3,10 +3,8 @@
 name: Deploy Hotfix
 
 on:
-#  pull_request_review:
-#    types: [submitted]
-  check_suite:
-    types: [completed]
+  pull_request_review:
+    types: [submitted]
 
 concurrency: app-deployment
 
