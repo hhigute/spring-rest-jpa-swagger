@@ -2,9 +2,18 @@
 
 name: Deploy Hotfix
 
+#on:
+#  pull_request_review:
+#    types: [submitted]
+
 on:
-  pull_request_review:
-    types: [submitted]
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Test scenario tags'
+        required: true
+        type: string
+
 
 concurrency: app-deployment
 
