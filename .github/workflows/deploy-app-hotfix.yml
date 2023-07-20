@@ -6,11 +6,14 @@ name: Deploy Hotfix
 #  pull_request_review:
 #    types: [submitted]
 
-on:
-  workflow_dispatch:
-    inputs:
-      tags:
+#on:
+#  workflow_dispatch:
+#    inputs:
+#      tags:
 
+on:
+  release:
+    types: [published]
 
 concurrency: app-deployment
 
@@ -20,7 +23,9 @@ env:
 jobs:
   # Generate outputs based on json config file that can be used in subsequent jobs
   generate-config:
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'hotfix') && github.event.review.state == 'approved' }}
+    #if: ${{ github.event.release.tag_name }}.
+    if:  ${{ !endsWith(github.event.release.tag_name, '.0') }}
+    # if: ${{ contains(github.event.pull_request.labels.*.name, 'hotfix') && github.event.review.state == 'approved' }}
     # if: github.event.review.state == 'approved'
     name: Generate Config
     runs-on: ubuntu-latest
