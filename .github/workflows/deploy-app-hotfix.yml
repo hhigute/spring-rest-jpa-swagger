@@ -27,7 +27,7 @@ jobs:
     if:  ${{ !endsWith(github.event.release.tag_name, '.0') }}
     # if: ${{ contains(github.event.pull_request.labels.*.name, 'hotfix') && github.event.review.state == 'approved' }}
     # if: github.event.review.state == 'approved'
-    name: Generate Config  \n- Tag (${{ github.event.release.tag_name }}) \n- Commit hash (${{ github.sha }})
+    name: Generate Config  (${{ github.event.release.tag_name }})
     runs-on: ubuntu-latest
     outputs:
       staging_ecr_repository: ${{ steps.create-output.outputs.staging_ecr_repository }}
@@ -80,25 +80,6 @@ jobs:
         run: echo "deploy-staging"
 
 
-  draft-release:
-    needs: [ deploy-staging ]
-    name: Draft Release Notes
-    runs-on: ubuntu-latest
-    outputs:
-      release_tag: ${{ steps.draft-release.outputs.tag_name }}
-      release_id: ${{ steps.draft-release.outputs.id }}
-    steps:
-      - name: Draft Release Notes
-        uses: release-drafter/release-drafter@v5
-        id: draft-release
-        with:
-          publish: false
-          disable-autolabeler: true
-          config-name: release-drafter.yml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
   replicate-image-prod:
     needs: [ deploy-staging ]
     name: Replicate Image to Production
@@ -108,17 +89,8 @@ jobs:
         run: echo "replicate-image-prod"
 
 
-  publish-release:
-    needs: [ draft-release, replicate-image-prod ]
-    name: Publish Release
-    runs-on: ubuntu-latest
-    steps:
-      - name: print
-        run: echo "publish-release"
-
-
   deploy-production:
-    needs: [ deploy-staging, replicate-image-prod, publish-release ]
+    needs: [ deploy-staging, replicate-image-prod ]
     name: Deploy Production
     environment: prod-env
     runs-on: ubuntu-latest
