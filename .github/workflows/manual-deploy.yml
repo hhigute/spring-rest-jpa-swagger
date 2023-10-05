@@ -79,7 +79,6 @@ jobs:
         run: echo "Build and Test"
 
   deploy-devserver:
-    if: ${{ always() && needs.build-test-devserver.result == 'success' && needs.build-test-staging.result != 'success' && needs.build-test-cube.result != 'success' }
     needs: [ generate-config, build-test-devserver ]
     name: Deploy Devserver
     environment: dev-env
@@ -99,7 +98,7 @@ jobs:
         run: echo "Build and Test"
 
   deploy-staging:
-    needs: [ build-test-staging ]
+    needs: [ generate-config, build-test-staging ]
     name: Deploy Staging
     environment: stg-env
     runs-on: ubuntu-latest
@@ -118,7 +117,7 @@ jobs:
         run: echo "Build and Test"
 
   deploy-cube:
-    needs: [ build-test-cube ]
+    needs: [ generate-config, build-test-cube ]
     name: Deploy Cube
     environment: cube-env
     runs-on: ubuntu-latest
