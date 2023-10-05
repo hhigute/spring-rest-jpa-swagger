@@ -79,7 +79,7 @@ jobs:
         run: echo "Build and Test"
 
   deploy-devserver:
-    if: ${{ always() && (needs.build-test-devserver.result == 'success' && needs.build-test-staging.result != 'success') && needs.build-test-cube.result != 'success')  }
+    if: ${{ always() && needs.build-test-devserver.result == 'success' && needs.build-test-staging.result != 'success' && needs.build-test-cube.result != 'success' }
     needs: [ generate-config, build-test-devserver ]
     name: Deploy Devserver
     environment: dev-env
