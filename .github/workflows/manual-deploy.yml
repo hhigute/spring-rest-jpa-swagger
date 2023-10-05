@@ -1,0 +1,127 @@
+# This workflow will build and deploy a docker container to AWS Fargate.
+
+name: Manual deploy - Playgound
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: Environment
+        required: true
+        default: 'devserver'
+        options:
+          - devserver
+          - staging
+          - cube
+
+concurrency: app-deployment
+
+env:
+  CONFIG_FILE_PATH: ".github/deploy-app-config.json"
+
+jobs:
+  # Generate outputs based on json config file that can be used in subsequent jobs
+  generate-config:
+    name: Generate Config
+    runs-on: ubuntu-latest
+    outputs:
+      develop_ecr_repository: ${{ steps.create-output.outputs.develop_ecr_repository }}
+      develop_task_definition_template: ${{ steps.create-output.outputs.develop_task_definition_template }}
+      develop_task_definition_family: ${{ steps.create-output.outputs.develop_task_definition_family }}
+      develop_container_name: ${{ steps.create-output.outputs.develop_container_name }}
+      develop_ecs_cluster: ${{ steps.create-output.outputs.develop_ecs_cluster }}
+      develop_ecs_service: ${{ steps.create-output.outputs.develop_ecs_service }}
+      develop_ecs_deployment_wait_seconds: ${{ steps.create-output.outputs.develop_ecs_deployment_wait_seconds }}
+      develop_run_dd_tests: ${{ steps.create-output.outputs.develop_run_dd_tests }}
+      develop_dd_test_id: ${{ steps.create-output.outputs.develop_dd_test_id }}
+      develop_send_slack_notifications: ${{ steps.create-output.outputs.develop_send_slack_notifications }}
+
+      staging_ecr_repository: ${{ steps.create-output.outputs.staging_ecr_repository }}
+      staging_task_definition_template: ${{ steps.create-output.outputs.staging_task_definition_template }}
+      staging_task_definition_family: ${{ steps.create-output.outputs.staging_task_definition_family }}
+      staging_container_name: ${{ steps.create-output.outputs.staging_container_name }}
+      staging_ecs_cluster: ${{ steps.create-output.outputs.staging_ecs_cluster }}
+      staging_ecs_service: ${{ steps.create-output.outputs.staging_ecs_service }}
+      staging_run_dd_tests: ${{ steps.create-output.outputs.staging_run_dd_tests }}
+      staging_dd_test_id: ${{ steps.create-output.outputs.staging_dd_test_id }}
+      staging_send_slack_notifications: ${{ steps.create-output.outputs.staging_send_slack_notifications }}
+
+      cube_ecr_repository: ${{ steps.create-output.outputs.cube_ecr_repository }}
+      cube_task_definition_template: ${{ steps.create-output.outputs.cube_task_definition_template }}
+      cube_task_definition_family: ${{ steps.create-output.outputs.cube_task_definition_family }}
+      cube_container_name: ${{ steps.create-output.outputs.cube_container_name }}
+      cube_ecs_cluster: ${{ steps.create-output.outputs.cube_ecs_cluster }}
+      cube_ecs_service: ${{ steps.create-output.outputs.cube_ecs_service }}
+      cube_run_dd_tests: ${{ steps.create-output.outputs.cube_run_dd_tests }}
+      cube_dd_test_id: ${{ steps.create-output.outputs.cube_dd_test_id }}
+      cube_send_slack_notifications: ${{ steps.create-output.outputs.cube_send_slack_notifications }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create output
+        id: create-output
+        run: |
+          mapfile -t input_keys < <(jq -r 'keys[]' ${{ env.CONFIG_FILE_PATH }})
+          for key in "${input_keys[@]}"
+          do
+            echo "$key=$(jq -r .$key ${{ env.CONFIG_FILE_PATH }})" >> $GITHUB_OUTPUT
+          done
+
+  build-test-devserver:
+    if: ${{ inputs.environment == 'devserver' }}
+    needs: [ generate-config ]
+    name: Build and Test - Devserver
+    runs-on: ubuntu-latest
+      steps:
+          - name: print
+            run: echo "Build and Test"
+
+  deploy-devserver:
+    needs: [ generate-config, build-test-devserver ]
+    name: Deploy Devserver
+    environment: dev-env
+    runs-on: ubuntu-latest
+      steps:
+          - name: print
+            run: echo "deploy-develop"
+
+
+  build-test-staging:
+    if: ${{ inputs.environment == 'staging' }}
+    needs: [ generate-config ]
+    name: Build and Test - Staging
+    runs-on: ubuntu-latest
+      steps:
+          - name: print
+            run: echo "Build and Test"
+
+  deploy-staging:
+    needs: [ generate-config, build-test-staging ]
+    name: Deploy Staging
+    environment: stg-env
+    runs-on: ubuntu-latest
+      steps:
+          - name: print
+            run: echo "deploy-staging"
+
+
+  build-test-cube:
+    if: ${{ inputs.environment == 'cube' }}
+    needs: [ generate-config ]
+    name: Build and Test - Cube
+    runs-on: ubuntu-latest
+      steps:
+          - name: print
+            run: echo "Build and Test"
+
+  deploy-cube:
+    needs: [ generate-config, build-test-cube ]
+    name: Deploy Cube
+    environment: cube-env
+    runs-on: ubuntu-latest
+      steps:
+          - name: print
+            run: echo "deploy-cube"
+
