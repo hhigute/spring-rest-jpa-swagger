@@ -74,18 +74,18 @@ jobs:
     needs: [ generate-config ]
     name: Build and Test - Devserver
     runs-on: ubuntu-latest
-      steps:
-          - name: print
-            run: echo "Build and Test"
+    steps:
+      - name: print
+        run: echo "Build and Test"
 
   deploy-devserver:
     needs: [ generate-config, build-test-devserver ]
     name: Deploy Devserver
     environment: dev-env
     runs-on: ubuntu-latest
-      steps:
-          - name: print
-            run: echo "deploy-develop"
+    steps:
+      - name: print
+        run: echo "deploy-develop"
 
 
   build-test-staging:
@@ -93,18 +93,18 @@ jobs:
     needs: [ generate-config ]
     name: Build and Test - Staging
     runs-on: ubuntu-latest
-      steps:
-          - name: print
-            run: echo "Build and Test"
+    steps:
+      - name: print
+        run: echo "Build and Test"
 
   deploy-staging:
     needs: [ generate-config, build-test-staging ]
     name: Deploy Staging
     environment: stg-env
     runs-on: ubuntu-latest
-      steps:
-          - name: print
-            run: echo "deploy-staging"
+    steps:
+      - name: print
+        run: echo "deploy-staging"
 
 
   build-test-cube:
@@ -112,16 +112,16 @@ jobs:
     needs: [ generate-config ]
     name: Build and Test - Cube
     runs-on: ubuntu-latest
-      steps:
-          - name: print
-            run: echo "Build and Test"
+    steps:
+      - name: print
+        run: echo "Build and Test"
 
   deploy-cube:
     needs: [ generate-config, build-test-cube ]
     name: Deploy Cube
     environment: cube-env
     runs-on: ubuntu-latest
-      steps:
-          - name: print
-            run: echo "deploy-cube"
+    steps:
+      - name: print
+        run: echo "deploy-cube"
 
