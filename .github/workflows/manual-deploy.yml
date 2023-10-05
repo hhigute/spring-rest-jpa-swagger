@@ -76,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: print
-        run: echo "Build and Test"
+        run: echo "Build and Test - ${{ github.triggering_actor }}"
 
   deploy-devserver:
     needs: [ generate-config, build-test-devserver ]
@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: print
-        run: echo "deploy-develop"
+        run: echo "deploy-develop-${{ github.triggering_actor }}"
 
 
   build-test-staging:
