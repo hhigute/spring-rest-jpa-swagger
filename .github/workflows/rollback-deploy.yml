@@ -90,7 +90,7 @@ jobs:
   deploy-stating:
     needs: [ generate-config ]
     name: Deploy Staging
-    environment: stg-stg
+    environment: stg-env
     runs-on: ubuntu-latest
     steps:
       - name: print
