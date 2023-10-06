@@ -1,7 +1,7 @@
 # This workflow will build and deploy a docker container to AWS Fargate.
 
 name: Manual deploy - Playgound
-run-name: Deploy ${{ github.sha }} to ${{ inputs.environment }} by @${{ github.actor }}
+run-name: Deploy ${{ github.ref_name }} to ${{ inputs.environment }} by @${{ github.actor }}
 on:
   workflow_dispatch:
     inputs:
