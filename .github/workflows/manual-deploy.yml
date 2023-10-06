@@ -22,7 +22,12 @@ env:
 
 jobs:
   # Generate outputs based on json config file that can be used in subsequent jobs
+  git-tag:
+    name: Check git tag
+    run-name: Deploy to ${{ inputs.environment }} by @${{ github.actor }}
+
   generate-config:
+    needs: [git-tag]
     name: Generate Config
     runs-on: ubuntu-latest
     outputs:
